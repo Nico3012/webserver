@@ -17,7 +17,7 @@ import (
 )
 
 // creates a tls server certificate by using a ca and its key to sign this certificate
-func createCertificate(caPath string, keyPath string, hosts []string) (tls.Certificate, error) {
+func createCertificate(caPath string, caKeyPath string, hosts []string) (tls.Certificate, error) {
 	// read ca and key file
 
 	caFile, err := os.ReadFile(caPath)
@@ -25,7 +25,7 @@ func createCertificate(caPath string, keyPath string, hosts []string) (tls.Certi
 		return tls.Certificate{}, err
 	}
 
-	caKeyFile, err := os.ReadFile(keyPath)
+	caKeyFile, err := os.ReadFile(caKeyPath)
 	if err != nil {
 		return tls.Certificate{}, err
 	}
@@ -193,8 +193,8 @@ func listenAndServeTLS(addr string, cert tls.Certificate, handler http.Handler) 
 	return http.Serve(listener, handler)
 }
 
-func CreateWebServerAndCertificate(addr string, caPath string, keyPath string, hosts []string, handler http.Handler) error {
-	cert, err := createCertificate(caPath, keyPath, hosts)
+func CreateWebServerAndCertificate(addr string, caPath string, caKeyPath string, hosts []string, handler http.Handler) error {
+	cert, err := createCertificate(caPath, caKeyPath, hosts)
 	if err != nil {
 		return err
 	}
@@ -202,8 +202,8 @@ func CreateWebServerAndCertificate(addr string, caPath string, keyPath string, h
 	return listenAndServeTLS(addr, cert, handler)
 }
 
-func CreateWebServer(addr string, certPath string, keyPath string, handler http.Handler) error {
-	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+func CreateWebServer(addr string, certPath string, certKeyPath string, handler http.Handler) error {
+	cert, err := tls.LoadX509KeyPair(certPath, certKeyPath)
 	if err != nil {
 		return err
 	}
