@@ -17,7 +17,7 @@ import (
 )
 
 // creates a tls server certificate by using a ca and its key to sign this certificate
-func createCertificate(caPath string, keyPath string, subject pkix.Name, hosts []string) (tls.Certificate, error) {
+func createCertificate(caPath string, keyPath string, hosts []string) (tls.Certificate, error) {
 	// read ca and key file
 
 	caFile, err := os.ReadFile(caPath)
@@ -64,6 +64,18 @@ func createCertificate(caPath string, keyPath string, subject pkix.Name, hosts [
 	serialNumber, err := rand.Int(rand.Reader, new(big.Int).Lsh(big.NewInt(1), 128))
 	if err != nil {
 		return tls.Certificate{}, err
+	}
+
+	subject := pkix.Name{
+		// if this information is missing, the certificate may not be trusted:
+		CommonName:         "liquipay.de",                                // required by openssl
+		Organization:       []string{"Liquipay UG (haftungsbeschränkt)"}, // required by openssl
+		OrganizationalUnit: []string{"IT"},                               // required by openssl
+		Country:            []string{"DE"},                               // required by openssl
+		Province:           []string{"Nordrhein-Westfalen"},              // required by openssl
+		Locality:           []string{"Lindlar"},                          // required by openssl
+		PostalCode:         []string{"51789"},                            // optional
+		StreetAddress:      []string{"Hauptstraße 10"},                   // optional
 	}
 
 	notBefore := time.Now()
@@ -181,8 +193,8 @@ func listenAndServeTLS(addr string, cert tls.Certificate, handler http.Handler) 
 	return http.Serve(listener, handler)
 }
 
-func CreateWebServerAndCertificate(addr string, caPath string, keyPath string, subject pkix.Name, hosts []string, handler http.Handler) error {
-	cert, err := createCertificate(caPath, keyPath, subject, hosts)
+func CreateWebServerAndCertificate(addr string, caPath string, keyPath string, hosts []string, handler http.Handler) error {
+	cert, err := createCertificate(caPath, keyPath, hosts)
 	if err != nil {
 		return err
 	}
