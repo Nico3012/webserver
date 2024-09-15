@@ -1,3 +1,3 @@
-module github.com/Nico3012/webserver
+module webserver
 
 go 1.23.1
