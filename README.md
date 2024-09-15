@@ -14,3 +14,6 @@ read more about go get from proxy server because go get command requests the pac
 
 # further development
 when you want to change the minimum go version, use <code>go mod edit -go &lt;version&gt;</code><br>
+
+# naming convention
+this module should be named "github.com/Nico3012/webserver" but when using go workspaces, the go mod tidy command tries to download the package because it not recognizes the go.work file. by simply using "webserver" as name, the go mod tidy command seas, this is not a url and does not fetch the package.
