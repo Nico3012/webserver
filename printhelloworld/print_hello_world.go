@@ -2,7 +2,8 @@ package printhelloworld
 
 import (
 	"fmt"
-	"webserver/gethelloworld"
+
+	"github.com/Nico3012/webserver/gethelloworld"
 )
 
 func PrintHelloWorld() {
