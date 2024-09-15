@@ -3,6 +3,12 @@ this can be hosted in a repository and installed via <code>go get &lt;example.co
 when you want to change the url to this repository, use <code>go mod edit -module &lt;example.com/username/repository&gt;</code><br>
 Note, this does not change the module import path of subdirectories. You have to manually change this later.<br>
 
+# disable go proxy
+To list the current value of all environment variables in go use: <code>go env</code>
+To modify a environment variable use <code>go env -w &lt;VARIABLE&gt;=&lt;value&gt;</code>
+To fetch packages directly from your server, you can set the GONOPROXY to your dependency domains: <code>go env -w GONOPROXY=&lt;example.com&gt;</code><br>
+To fetch packages directly from your server without a sum database, you can set the GONOSUMDB to your dependency domains: <code>go env -w GONOSUMDB=&lt;example.com&gt;</code><br>
+
 # todo
 read more about go get from proxy server because go get command requests the packages from a internal proxy server, that requires a internet connection.
 
