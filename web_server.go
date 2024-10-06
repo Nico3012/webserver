@@ -15,5 +15,6 @@ func CreateWebServerWithSelfSignedCertificate(caPath string, caKeyPath string) {
 // this function creates a web server from Let’s Encrypt certificate authority (ca)
 // the certificates will be renewed automatically
 // testing boolean indicates if the staging environment is used
+// cacheJsonPath is the file path to a json file, which acts like a key- value storage for certificate information
 // compared to self signed, this function needs a cache location to store certificates, because Let’s Encrypt limits the amount of certificates, that can be generated within a few days
 func CreateWebServerWithLetsEncryptCertificate(testing bool, cacheJsonPath string) {}
