@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
@@ -228,3 +229,7 @@ func GenerateCertFiles(certWritePath string, certKeyWritePath string, caPath str
 
 	return nil
 }
+
+// get certificate interface
+
+func GetCertificate(hello *tls.ClientHelloInfo) (*tls.Certificate, error) {}
