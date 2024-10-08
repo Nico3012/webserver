@@ -35,12 +35,12 @@ func CreateWebServerWithSelfSignedCertificate(addr string, caPath string, caKeyP
 }
 
 // this function creates a web server from Let’s Encrypt certificate authority (ca)
-// domain Autheintification is done by http-01 challenge, which requires a http server on port 80.
+// domain Autheintification is done by http-01 challenge, which requires a http server on port 80. THIS SERVER WILL NOT BE CREATED!!! Instead a function, that requires a "normal" http handler is returned, that returns the http header with the http-01 challenge included
 // the certificates will be renewed automatically
 // cacheJsonPath is the file path to a json file, which acts like a key- value storage for certificate information
 // compared to self signed, this function needs a cache location to store certificates, because Let’s Encrypt limits the amount of certificates, that can be generated within a few days
 // testing boolean indicates if the staging environment is used
-func CreateWebServerWithLetsEncryptCertificate(addr string, jsonCachePath string, testing bool, hosts []string, handler http.Handler, httpHandler http.Handler) {
+func CreateWebServerWithLetsEncryptCertificate(addr string, jsonCachePath string, testing bool, hosts []string, handler http.Handler) func(http.Handler) http.Handler {
 	jsonCache := jsoncache.JsonCache(jsonCachePath)
 
 	directoryURL := "https://acme-v02.api.letsencrypt.org/directory"
@@ -48,12 +48,19 @@ func CreateWebServerWithLetsEncryptCertificate(addr string, jsonCachePath string
 		directoryURL = "https://acme-staging-v02.api.letsencrypt.org/directory"
 	}
 
+	client := &acme.Client{
+		DirectoryURL: directoryURL,
+	}
+
 	manager := &autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist(hosts...),
-		Client: &acme.Client{
-			DirectoryURL: directoryURL,
-		},
-		Cache: jsonCache,
+		Client:     client,
+		Cache:      jsonCache,
 	}
+
+	// go routine
+	listenAndServeTLS(addr, manager.GetCertificate, handler)
+
+	return manager.HTTPHandler
 }
