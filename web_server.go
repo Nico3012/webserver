@@ -3,6 +3,10 @@ package webserver
 import (
 	"crypto/tls"
 	"net/http"
+
+	"github.com/Nico3012/webserver/jsoncache"
+	"golang.org/x/crypto/acme"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 func listenAndServeTLS(addr string, getCertificate func(hello *tls.ClientHelloInfo) (*tls.Certificate, error), handler http.Handler) error {
@@ -36,6 +40,20 @@ func CreateWebServerWithSelfSignedCertificate(addr string, caPath string, caKeyP
 // cacheJsonPath is the file path to a json file, which acts like a key- value storage for certificate information
 // compared to self signed, this function needs a cache location to store certificates, because Let’s Encrypt limits the amount of certificates, that can be generated within a few days
 // testing boolean indicates if the staging environment is used
-func CreateWebServerWithLetsEncryptCertificate(addr string, cacheJsonPath string, testing bool, hosts []string, handler http.Handler) {
-	//
+func CreateWebServerWithLetsEncryptCertificate(addr string, jsonCachePath string, testing bool, hosts []string, handler http.Handler, httpHandler http.Handler) {
+	jsonCache := jsoncache.JsonCache(jsonCachePath)
+
+	directoryURL := "https://acme-v02.api.letsencrypt.org/directory"
+	if testing {
+		directoryURL = "https://acme-staging-v02.api.letsencrypt.org/directory"
+	}
+
+	manager := &autocert.Manager{
+		Prompt:     autocert.AcceptTOS,
+		HostPolicy: autocert.HostWhitelist(hosts...),
+		Client: &acme.Client{
+			DirectoryURL: directoryURL,
+		},
+		Cache: jsonCache,
+	}
 }
