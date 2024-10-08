@@ -37,4 +37,5 @@ func CreateWebServerWithSelfSignedCertificate(addr string, caPath string, caKeyP
 // compared to self signed, this function needs a cache location to store certificates, because Let’s Encrypt limits the amount of certificates, that can be generated within a few days
 // testing boolean indicates if the staging environment is used
 func CreateWebServerWithLetsEncryptCertificate(addr string, cacheJsonPath string, testing bool, hosts []string, handler http.Handler) {
+	//
 }
