@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/Nico3012/webserver/jsoncache"
+	"github.com/Nico3012/webserver/internal/jsoncache"
 	"golang.org/x/crypto/acme"
 	"golang.org/x/crypto/acme/autocert"
 )
